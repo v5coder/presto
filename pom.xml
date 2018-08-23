@@ -72,7 +72,8 @@
     </properties>
 
     <modules>
-        <module>presto-atop</module>
+        <module>presto-main</module>
+        <!--<module>presto-atop</module>
         <module>presto-spi</module>
         <module>presto-jmx</module>
         <module>presto-record-decoder</module>
@@ -110,7 +111,7 @@
         <module>presto-server-rpm</module>
         <module>presto-docs</module>
         <module>presto-verifier</module>
-        <module>presto-testing-server-launcher</module>
+        <module>presto-testing-server-launcher</module>-->
     </modules>
 
     <dependencyManagement>
