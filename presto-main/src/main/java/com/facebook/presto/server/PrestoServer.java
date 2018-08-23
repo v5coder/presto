@@ -43,10 +43,7 @@ import io.airlift.node.NodeModule;
 import io.airlift.tracetoken.TraceTokenModule;
 import org.weakref.jmx.guice.MBeanModule;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.facebook.presto.server.PrestoSystemRequirements.verifyJvmRequirements;
 import static com.facebook.presto.server.PrestoSystemRequirements.verifySystemTimeIsReasonable;
@@ -58,6 +55,15 @@ import static java.util.Objects.requireNonNull;
 public class PrestoServer
         implements Runnable
 {
+
+    private static final Logger log = Logger.get(PrestoServer.class);
+
+    private static Announcer announcer;
+
+    public enum DatasourceAction {
+        ADD, DELETE;
+    }
+
     public static void main(String[] args)
     {
         new PrestoServer().run();
@@ -81,7 +87,7 @@ public class PrestoServer
         verifyJvmRequirements();
         verifySystemTimeIsReasonable();
 
-        Logger log = Logger.get(PrestoServer.class);
+        //Logger log = Logger.get(PrestoServer.class);
 
         ImmutableList.Builder<Module> modules = ImmutableList.builder();
         modules.add(
@@ -114,16 +120,18 @@ public class PrestoServer
 
             injector.getInstance(CatalogManager.class).loadCatalogs();
 
+            announcer = injector.getInstance(Announcer.class);
+
             // TODO: remove this huge hack
             updateDatasources(
-                    injector.getInstance(Announcer.class),
+                    announcer,
                     injector.getInstance(Metadata.class),
                     injector.getInstance(ServerConfig.class),
                     injector.getInstance(NodeSchedulerConfig.class));
 
             injector.getInstance(AccessControlManager.class).loadSystemAccessControl();
 
-            injector.getInstance(Announcer.class).start();
+            announcer.start();
 
             log.info("======== SERVER STARTED ========");
         }
@@ -184,5 +192,30 @@ public class PrestoServer
             }
         }
         throw new IllegalArgumentException("Presto announcement not found: " + announcements);
+    }
+
+    // 根据action更新数据源
+    public static void updateDatasourcesAnnouncement(String connectorId, DatasourceAction action)
+    {
+        // get existing announcement
+        ServiceAnnouncement announcement = getPrestoAnnouncement(announcer.getServiceAnnouncements());
+        // update datasources property
+        Map<String, String> properties = new LinkedHashMap<>(announcement.getProperties());
+        String property = nullToEmpty(properties.get("datasources"));
+        log.info("update datasources announcement : {" + action + "}");
+        Set<String> datasources = new LinkedHashSet<>(Splitter.on(',').trimResults().omitEmptyStrings().splitToList(property));
+        log.info("connector id : {" + connectorId + "}");
+        if (action == DatasourceAction.ADD) {
+            datasources.add(connectorId);
+        }
+        else if (action == DatasourceAction.DELETE) {
+            datasources.remove(connectorId);
+        }
+        log.info("datasources : {" + Joiner.on(',').join(datasources) + "}");
+        properties.put("datasources", Joiner.on(',').join(datasources));
+        // update announcement
+        announcer.removeServiceAnnouncement(announcement.getId());
+        announcer.addServiceAnnouncement(serviceAnnouncement(announcement.getType()).addProperties(properties).build());
+        announcer.forceAnnounce();
     }
 }

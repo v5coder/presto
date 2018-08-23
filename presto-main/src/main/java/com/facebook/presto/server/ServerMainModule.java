@@ -281,6 +281,9 @@ public class ServerMainModule
         // memory manager
         jaxrsBinder(binder).bind(MemoryResource.class);
 
+        // Catalogs
+        jaxrsBinder(binder).bind(CatalogResource.class);
+
         jsonCodecBinder(binder).bindJsonCodec(MemoryInfo.class);
         jsonCodecBinder(binder).bindJsonCodec(MemoryPoolAssignmentsRequest.class);
 

@@ -131,4 +131,10 @@ public class TablePropertyManager
         }
         return objectValue;
     }
+
+    public synchronized void removeTableProperty(String connectorId) {
+        if (catalogTableProperties.containsKey(connectorId)) {
+            catalogTableProperties.remove(connectorId);
+        }
+    }
 }

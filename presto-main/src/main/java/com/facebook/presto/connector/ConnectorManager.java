@@ -19,25 +19,13 @@ import com.facebook.presto.index.IndexManager;
 import com.facebook.presto.metadata.HandleResolver;
 import com.facebook.presto.metadata.MetadataManager;
 import com.facebook.presto.security.AccessControlManager;
+import com.facebook.presto.spi.ConnectorHandleResolver;
 import com.facebook.presto.spi.NodeManager;
 import com.facebook.presto.spi.SystemTable;
 import com.facebook.presto.spi.classloader.ThreadContextClassLoader;
-import com.facebook.presto.spi.connector.Connector;
-import com.facebook.presto.spi.connector.ConnectorAccessControl;
-import com.facebook.presto.spi.connector.ConnectorFactory;
-import com.facebook.presto.spi.connector.ConnectorIndexProvider;
-import com.facebook.presto.spi.connector.ConnectorNodePartitioningProvider;
-import com.facebook.presto.spi.connector.ConnectorPageSinkProvider;
-import com.facebook.presto.spi.connector.ConnectorPageSourceProvider;
-import com.facebook.presto.spi.connector.ConnectorRecordSetProvider;
-import com.facebook.presto.spi.connector.ConnectorRecordSinkProvider;
-import com.facebook.presto.spi.connector.ConnectorSplitManager;
+import com.facebook.presto.spi.connector.*;
 import com.facebook.presto.spi.procedure.Procedure;
-import com.facebook.presto.split.PageSinkManager;
-import com.facebook.presto.split.PageSourceManager;
-import com.facebook.presto.split.RecordPageSinkProvider;
-import com.facebook.presto.split.RecordPageSourceProvider;
-import com.facebook.presto.split.SplitManager;
+import com.facebook.presto.split.*;
 import com.facebook.presto.sql.planner.NodePartitioningManager;
 import com.facebook.presto.transaction.LegacyTransactionConnectorFactory;
 import com.facebook.presto.transaction.TransactionManager;
@@ -45,7 +33,6 @@ import io.airlift.log.Logger;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -337,5 +324,30 @@ public class ConnectorManager
     {
         // for now connectorId == catalogName
         return catalogName;
+    }
+
+    //根据catalog name移除连接
+    public synchronized void removeConnector(String catalogName) {
+        String connectorId = getConnectorId(catalogName);
+        metadataManager.removeConnectorMetadata(catalogName);
+        splitManager.removeConnectorSplitManager(makeInformationSchemaConnectorId(connectorId));
+        pageSourceManager.removeConnectorPageSourceProvider(makeInformationSchemaConnectorId(connectorId));
+        metadataManager.removeInformationSchemaMetadata(makeInformationSchemaConnectorId(connectorId), catalogName);
+        splitManager.removeConnectorSplitManager(makeSystemTablesConnectorId(connectorId));
+        pageSourceManager.removeConnectorPageSourceProvider(makeSystemTablesConnectorId(connectorId));
+        metadataManager.removeSystemTablesMetadata(makeSystemTablesConnectorId(connectorId), catalogName);
+        splitManager.removeConnectorSplitManager(connectorId);
+        pageSourceManager.removeConnectorPageSourceProvider(connectorId);
+        //handleResolver.removeHandleResolver(connectorId);
+        metadataManager.removeConnectorsById(connectorId);
+        metadataManager.removeSessionProperty(connectorId);
+        metadataManager.removeTableProperty(connectorId);
+        pageSinkManager.removeConnectorPageSinkProvider(connectorId);
+        indexManager.removeIndexResolver(connectorId);
+        transactionManager.removeConnectorIdByTransaction(connectorId);
+        connectors.remove(connectorId);
+        connectors.remove(INFORMATION_SCHEMA_CONNECTOR_PREFIX + connectorId);
+        connectors.remove(SYSTEM_TABLES_CONNECTOR_PREFIX + connectorId);
+        catalogs.remove(connectorId);
     }
 }

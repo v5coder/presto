@@ -168,4 +168,11 @@ public class HandleResolver
         }
         throw new IllegalArgumentException("No connector for handle: " + handle);
     }
+
+    public void removeHandleResolver(String id)
+    {
+        if (handleResolvers.containsKey(id)) {
+            handleResolvers.remove(id);
+        }
+    }
 }

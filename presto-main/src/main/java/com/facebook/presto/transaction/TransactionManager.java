@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.transaction;
 
+import com.facebook.presto.connector.ConnectorManager;
 import com.facebook.presto.spi.PrestoException;
 import com.facebook.presto.spi.connector.Connector;
 import com.facebook.presto.spi.connector.ConnectorMetadata;
@@ -471,6 +472,15 @@ public class TransactionManager
                     connector.rollback(transactionHandle);
                 }
             }
+        }
+    }
+
+    public void removeConnectorIdByTransaction(String connectorId)
+    {
+        if (connectorsById.containsKey(connectorId)) {
+            connectorsById.remove(connectorId);
+            connectorsById.remove(ConnectorManager.INFORMATION_SCHEMA_CONNECTOR_PREFIX + connectorId);
+            connectorsById.remove(ConnectorManager.SYSTEM_TABLES_CONNECTOR_PREFIX + connectorId);
         }
     }
 }

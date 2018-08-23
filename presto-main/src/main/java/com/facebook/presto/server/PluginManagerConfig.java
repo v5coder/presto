@@ -25,7 +25,7 @@ import java.util.List;
 
 public class PluginManagerConfig
 {
-    private File installedPluginsDir = new File("plugin");
+    private File installedPluginsDir = new File("D:\\java\\presto-server-0.149\\plugin");
     private List<String> plugins;
     private File pluginConfigurationDir = new File("etc/");
     private String mavenLocalRepository = ArtifactResolver.USER_LOCAL_REPO;

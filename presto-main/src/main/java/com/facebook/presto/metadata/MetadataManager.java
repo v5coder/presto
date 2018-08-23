@@ -855,4 +855,46 @@ public class MetadataManager
         provider.setJsonDeserializers(ImmutableMap.<Class<?>, JsonDeserializer<?>>of(Type.class, new TypeDeserializer(new TypeRegistry())));
         return new JsonCodecFactory(provider).jsonCodec(ViewDefinition.class);
     }
+
+    public synchronized void removeConnectorMetadata(String catalogName)
+    {
+        if (connectorsByCatalog.containsKey(catalogName)) {
+            connectorsByCatalog.remove(catalogName);
+        }
+    }
+
+    public synchronized void removeInformationSchemaMetadata(String connectorId, String catalogName)
+    {
+        if (informationSchemasByCatalog.containsKey(catalogName)) {
+            informationSchemasByCatalog.remove(catalogName);
+        }
+        if (connectorsById.containsKey(connectorId)) {
+            connectorsById.remove(connectorId);
+        }
+    }
+
+    public synchronized void removeSystemTablesMetadata(String connectorId, String catalogName)
+    {
+        if (systemTablesByCatalog.containsKey(catalogName)) {
+            systemTablesByCatalog.remove(catalogName);
+        }
+        if (connectorsById.containsKey(connectorId)) {
+            connectorsById.remove(connectorId);
+        }
+    }
+
+    public synchronized void removeConnectorsById(String connectorId)
+    {
+        if (connectorsById.containsKey(connectorId)) {
+            connectorsById.remove(connectorId);
+        }
+    }
+
+    public synchronized void removeSessionProperty(String connectorId) {
+        sessionPropertyManager.removeSessionProperty(connectorId);
+    }
+
+    public synchronized void removeTableProperty(String connectorId) {
+        tablePropertyManager.removeTableProperty(connectorId);
+    }
 }

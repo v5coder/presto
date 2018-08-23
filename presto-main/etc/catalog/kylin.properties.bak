@@ -1,0 +1,5 @@
+connector.name=kylin
+kylin.connection-url=http://10.73.9.85:7070/kylin/api
+kylin.username=D3Ill6F9RqswNxtg0NSzRo6gAe/K+ic4xm0ymDD63PSPZSlYU1Bl3Op+MrGOPG0z6MRPHaQmjG5keIaQsPzH5A==
+kylin.password=R5n8ceVldhz6p34ajyCn9i3IF6P7h7NJFlBapyvjpPwTK2rshqCMa0o3lbDVMvH7SetoGro6MzxC8QEvyF3eag==
+kylin.project-name=infrasystem

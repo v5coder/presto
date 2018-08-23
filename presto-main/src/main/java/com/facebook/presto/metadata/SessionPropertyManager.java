@@ -408,4 +408,10 @@ public final class SessionPropertyManager
             return propertyMetadata;
         }
     }
+
+    public synchronized void removeSessionProperty(String connectorId) {
+        if (catalogSessionProperties.containsKey(connectorId)) {
+            catalogSessionProperties.remove(connectorId);
+        }
+    }
 }
