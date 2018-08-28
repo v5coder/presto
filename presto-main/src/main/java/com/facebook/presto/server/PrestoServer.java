@@ -59,6 +59,7 @@ import static io.airlift.discovery.client.ServiceAnnouncement.ServiceAnnouncemen
 import static io.airlift.discovery.client.ServiceAnnouncement.serviceAnnouncement;
 import static java.util.Objects.requireNonNull;
 
+//-ea -XX:+UseG1GC -XX:G1HeapRegionSize=32M -XX:+UseGCOverheadLimit -XX:+ExplicitGCInvokesConcurrent -Xmx2G -Dconfig=etc/config.properties -Dlog.levels-file=etc/log.properties
 public class PrestoServer
         implements Runnable
 {

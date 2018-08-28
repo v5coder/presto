@@ -65,6 +65,13 @@
     </properties>
 
     <modules>
+        <module>presto-main</module>
+        <module>presto-kylin</module>
+        <module>presto-base-jdbc</module>
+        <module>presto-mysql</module>
+        <module>presto-example-http</module>
+        <module>presto-kafka</module>
+        <!--
         <module>presto-atop</module>
         <module>presto-spi</module>
         <module>presto-array</module>
@@ -118,7 +125,7 @@
         <module>presto-thrift-connector</module>
         <module>presto-matching</module>
         <module>presto-memory-context</module>
-        <module>presto-proxy</module>
+        <module>presto-proxy</module>-->
     </modules>
 
     <dependencyManagement>
@@ -360,6 +367,12 @@
             <dependency>
                 <groupId>com.facebook.presto</groupId>
                 <artifactId>presto-sqlserver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.facebook.presto</groupId>
+                <artifactId>presto-kylin</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -78,7 +78,7 @@ public class StaticCatalogStore
         catalogsLoaded.set(true);
     }
 
-    private void loadCatalog(File file)
+    public void loadCatalog(File file)
             throws Exception
     {
         String catalogName = Files.getNameWithoutExtension(file.getName());
