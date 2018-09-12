@@ -163,6 +163,7 @@ public class HandleResolver
 
     private <T> String getId(T handle, Function<MaterializedHandleResolver, Optional<Class<? extends T>>> getter)
     {
+
         for (Entry<String, MaterializedHandleResolver> entry : handleResolvers.entrySet()) {
             try {
                 if (getter.apply(entry.getValue()).map(clazz -> clazz.isInstance(handle)).orElse(false)) {

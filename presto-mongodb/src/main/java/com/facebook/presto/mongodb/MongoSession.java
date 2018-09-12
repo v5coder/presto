@@ -13,21 +13,11 @@
  */
 package com.facebook.presto.mongodb;
 
-import com.facebook.presto.spi.ColumnHandle;
-import com.facebook.presto.spi.PrestoException;
-import com.facebook.presto.spi.SchemaNotFoundException;
-import com.facebook.presto.spi.SchemaTableName;
-import com.facebook.presto.spi.TableNotFoundException;
+import com.facebook.presto.spi.*;
 import com.facebook.presto.spi.predicate.Domain;
 import com.facebook.presto.spi.predicate.Range;
 import com.facebook.presto.spi.predicate.TupleDomain;
-import com.facebook.presto.spi.type.NamedTypeSignature;
-import com.facebook.presto.spi.type.RowFieldName;
-import com.facebook.presto.spi.type.StandardTypes;
-import com.facebook.presto.spi.type.Type;
-import com.facebook.presto.spi.type.TypeManager;
-import com.facebook.presto.spi.type.TypeSignature;
-import com.facebook.presto.spi.type.TypeSignatureParameter;
+import com.facebook.presto.spi.type.*;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -47,14 +37,7 @@ import io.airlift.slice.Slice;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -117,7 +100,10 @@ public class MongoSession
         this.implicitPrefix = config.getImplicitRowFieldPrefix();
 
         this.tableCache = CacheBuilder.newBuilder()
+                //设置cache中的数据在写入之后的存活时间为1小时
+                //当缓存项在指定的时间段内没有更新就会被回收
                 .expireAfterWrite(1, HOURS)  // TODO: Configure
+                //当缓存项上一次更新操作之后的多久会被刷新
                 .refreshAfterWrite(1, MINUTES)
                 .build(CacheLoader.from(this::loadTableSchema));
     }

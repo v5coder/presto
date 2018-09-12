@@ -71,7 +71,6 @@
         <module>presto-mysql</module>
         <module>presto-example-http</module>
         <module>presto-kafka</module>
-        <!--
         <module>presto-atop</module>
         <module>presto-spi</module>
         <module>presto-array</module>
@@ -125,7 +124,8 @@
         <module>presto-thrift-connector</module>
         <module>presto-matching</module>
         <module>presto-memory-context</module>
-        <module>presto-proxy</module>-->
+        <module>presto-proxy</module>
+        <module>presto-carbondata</module>
     </modules>
 
     <dependencyManagement>
