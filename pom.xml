@@ -67,6 +67,7 @@
     </properties>
 
     <modules>
+        <module>presto-carbondata</module>
         <module>presto-atop</module>
         <module>presto-spi</module>
         <module>presto-array</module>
